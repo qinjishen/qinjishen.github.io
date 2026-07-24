@@ -1,0 +1,71 @@
+---
+import "../styles/global.css";
+import { languages, type Lang } from "../lib/blog";
+import { sitePath } from "../lib/paths";
+
+interface Props {
+  title: string;
+  description: string;
+  lang: Lang;
+  currentPath: string;
+}
+
+const { title, description, lang, currentPath } = Astro.props;
+const dictionary = languages[lang];
+const switchLang = lang === "zh" ? "en" : "zh";
+const switchPath = currentPath.replace(`/${lang}/`, `/${switchLang}/`);
+const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site) : Astro.url;
+const navItems = [
+  { href: `/${lang}/`, label: dictionary.navHome },
+  { href: `/${lang}/blog/`, label: dictionary.navBlog },
+  { href: `/${lang}/about/`, label: dictionary.navAbout }
+];
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f7f7f5" />
+    <meta name="description" content={description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <link rel="canonical" href={canonical} />
+    <link rel="alternate" type="application/rss+xml" title="Qin Ji Shen RSS" href={sitePath("/rss.xml")} />
+    <title>{title}</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">{lang === "zh" ? "跳到正文" : "Skip to content"}</a>
+    <header class="site-header">
+      <div class="shell header-inner">
+        <a class="brand" href={sitePath(dictionary.path)} aria-label={dictionary.siteTitle}>
+          <span class="brand-mark" aria-hidden="true">Q</span>
+          <span>{dictionary.siteTitle}</span>
+        </a>
+        <nav class="nav-links" aria-label={lang === "zh" ? "主导航" : "Main navigation"}>
+          {navItems.map((item) => (
+            <a
+              href={sitePath(item.href)}
+              aria-current={currentPath === item.href ? "page" : undefined}
+            >
+              {item.label}
+            </a>
+          ))}
+          <a class="language-link" href={sitePath(switchPath)}>{dictionary.switchLabel}</a>
+        </nav>
+      </div>
+    </header>
+    <main id="main-content">
+      <slot />
+    </main>
+    <footer class="site-footer">
+      <div class="shell footer-inner">
+        <p>© {new Date().getFullYear()} Qin Ji Shen</p>
+        <a href={sitePath("/rss.xml")}>RSS</a>
+      </div>
+    </footer>
+  </body>
+</html>

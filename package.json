@@ -1,0 +1,22 @@
+{
+  "name": "qin-ji-shen-blog",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "sync:obsidian": "node --env-file=.env.local scripts/sync-obsidian.mjs",
+    "sync:obsidian:watch": "node --env-file=.env.local scripts/sync-obsidian.mjs --watch"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.9.4",
+    "@astrojs/rss": "^4.0.18",
+    "astro": "^6.1.5",
+    "chokidar": "^5.0.0",
+    "gray-matter": "^4.0.3",
+    "typescript": "^5.9.3"
+  }
+}

@@ -1,0 +1,19 @@
+---
+import { sitePath } from "../lib/paths";
+
+const target = sitePath("/zh/");
+---
+
+<!doctype html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="robots" content="noindex" />
+    <meta http-equiv="refresh" content={`0;url=${target}`} />
+    <link rel="canonical" href={target} />
+    <title>秦继深</title>
+  </head>
+  <body>
+    <p><a href={target}>进入中文站点</a></p>
+  </body>
+</html>
