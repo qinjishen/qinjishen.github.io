@@ -1,43 +1,28 @@
-# Qin Ji Shen Blog
+# 舔了吗
 
-A bilingual Astro blog designed for Markdown writing and automatic deployment to GitHub Pages.
+一个娱乐向的情感耐力测试网页。粘贴情侣聊天记录后，页面会在当前浏览器中分析互动模式，生成舔度指数、互动维度、娱乐化结论和一条沟通建议。
 
-## Local preview
+## 功能
+
+- 粘贴或填入示例聊天记录
+- 识别提问、短回复、关心和道歉等模式
+- 生成舔度指数和互动维度
+- 一键复制鉴定结果
+- 手机和电脑自适应
+- 聊天内容仅在当前浏览器处理，不上传、不保存
+- 明确标注仅供娱乐、非心理诊断
+
+## 本地运行
 
 ```bash
 npm install
 npm run dev
 ```
 
-Open the local address printed by Astro, normally `http://localhost:4321`.
+## 发布
 
-## Publish
+`main` 分支的每次推送都会触发 GitHub Actions，并自动发布到 GitHub Pages。
 
-Push the `main` branch to GitHub. The workflow in `.github/workflows/deploy.yml` builds the site and publishes it to GitHub Pages automatically.
+## 说明
 
-In the repository settings, open **Settings > Pages** and set **Source** to **GitHub Actions** if GitHub does not select it automatically.
-
-## Add an article
-
-Create a Markdown file under one of these directories:
-
-```text
-src/content/posts/zh/
-src/content/posts/en/
-```
-
-Use the existing `hello-world.md` file as the frontmatter template. Keep `draft: true` until an article is ready to publish.
-
-## Obsidian sync
-
-Copy `.env.example` to `.env.local`, set the absolute paths for your vault, then run:
-
-```bash
-npm run sync:obsidian
-```
-
-For continuous local syncing while writing:
-
-```bash
-npm run sync:obsidian:watch
-```
+当前版本使用本地规则分析，不接入 AI 模型，也不支持截图识别。结果只提供娱乐和观察角度，不构成心理、医学或关系判断。

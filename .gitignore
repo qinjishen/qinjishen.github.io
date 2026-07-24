@@ -2,5 +2,7 @@ node_modules
 dist
 .astro
 .DS_Store
-.env.local
-.obsidian-sync-manifest.json
+*.local
+*.tsbuildinfo
+vite.config.js
+vite.config.d.ts

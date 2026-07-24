@@ -1,22 +1,25 @@
 {
-  "name": "qin-ji-shen-blog",
+  "name": "tianlema",
   "version": "1.0.0",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
   "scripts": {
-    "dev": "astro dev",
-    "start": "astro dev",
-    "build": "astro check && astro build",
-    "preview": "astro preview",
-    "sync:obsidian": "node --env-file=.env.local scripts/sync-obsidian.mjs",
-    "sync:obsidian:watch": "node --env-file=.env.local scripts/sync-obsidian.mjs --watch"
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
-    "@astrojs/check": "^0.9.4",
-    "@astrojs/rss": "^4.0.18",
-    "astro": "^6.1.5",
-    "chokidar": "^5.0.0",
-    "gray-matter": "^4.0.3",
-    "typescript": "^5.9.3"
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@vitejs/plugin-react": "^5.1.0",
+    "typescript": "^5.9.3",
+    "vite": "^7.2.0"
   }
 }

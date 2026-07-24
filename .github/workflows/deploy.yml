@@ -1,4 +1,4 @@
-name: Deploy website to GitHub Pages
+name: Deploy Tianlema to GitHub Pages
 
 on:
   push:
@@ -20,10 +20,21 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      - name: Build Astro site
-        uses: withastro/action@v3
+      - name: Set up Node
+        uses: actions/setup-node@v4
         with:
           node-version: 24
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Build static site
+        run: npm run build
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+      - name: Upload website
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: dist
 
   deploy:
     environment:
