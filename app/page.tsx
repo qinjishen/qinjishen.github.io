@@ -1,6 +1,13 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import {
+  ATTACHMENT_GROUPS,
+  ATTACHMENT_TYPES,
+  TYPE_DIMENSIONS,
+  getTypeProfile,
+  type AttachmentGroup,
+} from "./attachment-types";
 
 const SAMPLE_CHAT = `我：你下班了吗？
 对方：还没
@@ -87,7 +94,18 @@ export default function Home() {
   const [report, setReport] = useState<Report | null>(null);
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [typeFilter, setTypeFilter] = useState<AttachmentGroup | "all">("all");
+  const [selectedTypeCode, setSelectedTypeCode] = useState("CTDR");
   const count = useMemo(() => chat.length, [chat]);
+  const visibleTypes = useMemo(
+    () => typeFilter === "all"
+      ? ATTACHMENT_TYPES
+      : ATTACHMENT_TYPES.filter((item) => item.group === typeFilter),
+    [typeFilter],
+  );
+  const selectedType = ATTACHMENT_TYPES.find((item) => item.code === selectedTypeCode)
+    ?? ATTACHMENT_TYPES[0];
+  const selectedGroup = ATTACHMENT_GROUPS.find((item) => item.id === selectedType.group)!;
 
   const analyze = () => {
     if (chat.trim().length < 12) return;
@@ -142,6 +160,7 @@ export default function Home() {
         </a>
         <nav aria-label="主导航">
           <a href="#top" className="active">首页</a>
+          <a href="#atlas">关系图鉴</a>
           <a href="#how">鉴定原理</a>
           <a href="#report">样例报告</a>
           <a href="#about">关于</a>
@@ -238,6 +257,153 @@ export default function Home() {
           </div>
         </section>
       )}
+
+      <section className="atlas" id="atlas">
+        <div className="atlas-intro">
+          <div>
+            <p className="eyebrow">RELATIONSHIP ATLAS / 关系互动图鉴</p>
+            <h2>四个动作维度，<br />十六种关系姿势。</h2>
+          </div>
+          <div className="atlas-note">
+            <strong>这是互动观察框架，不是临床依恋诊断。</strong>
+            <p>类型描述的是人在一段关系里的当下策略，可能随对象、阶段和压力变化。目前聊天鉴定不会自动给你判型。</p>
+          </div>
+        </div>
+
+        <div className="dimension-key" aria-label="类型代号说明">
+          {TYPE_DIMENSIONS.map((dimension, index) => (
+            <article key={dimension.key}>
+              <span>0{index + 1}</span>
+              <h3>{dimension.label}</h3>
+              <div><b>{dimension.left}</b><i>/</i><b>{dimension.right}</b></div>
+              <p>{dimension.description}</p>
+            </article>
+          ))}
+        </div>
+
+        <div className="atlas-toolbar">
+          <div className="atlas-heading">
+            <span>16 TYPES</span>
+            <strong>选择一种，查看它正在关系里做什么</strong>
+          </div>
+          <div className="type-filters" aria-label="按互动底色筛选">
+            <button
+              type="button"
+              className={typeFilter === "all" ? "selected" : ""}
+              onClick={() => setTypeFilter("all")}
+            >
+              全部
+            </button>
+            {ATTACHMENT_GROUPS.map((group) => (
+              <button
+                type="button"
+                className={typeFilter === group.id ? "selected" : ""}
+                onClick={() => {
+                  setTypeFilter(group.id);
+                  const firstType = ATTACHMENT_TYPES.find((item) => item.group === group.id);
+                  if (firstType) setSelectedTypeCode(firstType.code);
+                }}
+                key={group.id}
+              >
+                {group.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="type-grid">
+          {visibleTypes.map((item) => {
+            const group = ATTACHMENT_GROUPS.find((candidate) => candidate.id === item.group)!;
+            return (
+              <button
+                type="button"
+                className={`type-card type-${item.group} ${selectedType.code === item.code ? "selected" : ""}`}
+                onClick={() => {
+                  setSelectedTypeCode(item.code);
+                  window.setTimeout(() => {
+                    document.querySelector("#type-profile")?.scrollIntoView({
+                      behavior: "smooth",
+                      block: "nearest",
+                    });
+                  }, 0);
+                }}
+                aria-pressed={selectedType.code === item.code}
+                key={item.code}
+              >
+                <span className="type-code">{item.code}</span>
+                <span className="type-group">{group.label}</span>
+                <strong>{item.name}</strong>
+                <small>{item.tagline}</small>
+                <i aria-hidden="true">↘</i>
+              </button>
+            );
+          })}
+        </div>
+
+        <article className={`type-profile type-${selectedType.group}`} id="type-profile">
+          <div className="profile-identity">
+            <div className="profile-code">{selectedType.code}</div>
+            <p>{selectedGroup.label} / {selectedType.tendency}</p>
+            <h2>{selectedType.name}</h2>
+            <blockquote>{selectedType.tagline}</blockquote>
+            <p className="profile-summary">{selectedType.summary}</p>
+          </div>
+
+          <div className="profile-body">
+            <div className="profile-dimensions">
+              <h3>四维画像</h3>
+              {getTypeProfile(selectedType.code).map((item) => (
+                <div key={item.label}>
+                  <span>{item.label}</span>
+                  <strong>{item.value}</strong>
+                </div>
+              ))}
+            </div>
+
+            <div className="profile-observation">
+              <span className="profile-label">正在干什么</span>
+              <h3>{selectedType.action}</h3>
+              <dl>
+                <div>
+                  <dt>真正需要</dt>
+                  <dd>{selectedType.need}</dd>
+                </div>
+                <div>
+                  <dt>压力之下</dt>
+                  <dd>{selectedType.stress}</dd>
+                </div>
+              </dl>
+            </div>
+
+            <div className="strategy-column">
+              <h3>和 TA 相处</h3>
+              <ul>{selectedType.partnerMoves.map((item) => <li key={item}>{item}</li>)}</ul>
+            </div>
+            <div className="strategy-column self">
+              <h3>给自己的提醒</h3>
+              <ul>{selectedType.selfMoves.map((item) => <li key={item}>{item}</li>)}</ul>
+            </div>
+
+            <div className="similar-types">
+              <span>相邻类型</span>
+              <div>
+                {selectedType.similar.map((code) => {
+                  const item = ATTACHMENT_TYPES.find((candidate) => candidate.code === code)!;
+                  return (
+                    <button
+                      type="button"
+                      onClick={() => setSelectedTypeCode(code)}
+                      key={code}
+                    >
+                      <b>{code}</b>{item.name}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </article>
+      </section>
 
       <section className="how" id="how">
         <div className="section-heading">
